@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head th:include="layout :: htmlhead"></head>
+    <body>
+        <div class="container">
+			<nav th:replace="layout :: menu">(menu)</nav>
+        <h1>Paciente</h1>
+        <a th:href="@{'/paciente/novo' }" 
+           class="btn btn-primary btn-lg">Novo</a>
+           <br></br>
+           <form class="form-inline my-2 my-sm-0" th:action="@{/paciente}">      
+                <input class="form-control mr-sm-2" type="search"                
+                name="busca"                   
+                placeholder="Pesquisar" aria-label="Search">      
+                <button class="btn btn-success my-2 my-sm-0"type="submit">Pesquisar</button> 
+            </form>
+            <br></br>
+
+
+        <table class ="table" id="pacientes">
+            <thead>
+                <th>id</th>
+                <th>nome</th>
+                <th>sexo</th>
+                <th>Data Nascimento</th>
+            </thead>
+             <tbody>
+                 <tr th:each="umpaciente : ${listapacientes}">
+                     <td th:text = "${umpaciente.id}"></td>
+                     <td th:text = "${umpaciente.nome}"></td>
+                     <td th:text = "${umpaciente.sexo}"></td>
+                     <td th:text = "${umpaciente.dataNascimento}"></td>
+                     <td >
+                         <a th:href="@{'/paciente/alterar/' + ${umpaciente.id}}" class="btn btn-primary ">Alterar</a>
+
+                            <button class='btn btn-danger js-delete'
+                            th:data-paciente-id="${umpaciente.id}">
+                            Excluir</button>
+
+                     </td>
+                 </tr>
+             </tbody>
+            </table>
+        </div>
+        <div th:include="layout :: footer" id="footer">(footer)</div> 
+        <script type="text/javascript">
+           $(document).ready(function(){
+                $("#pacientes").on("click",".js-delete",function(){
+                    var button = $(this);
+                      bootbox.confirm("Confirma a exclusão do paciente", function(result){;
+                        if(result){
+                            $.ajax({ 
+                                url: "/paciente/delete/" + button.attr("data-paciente-id"),   
+                                method: "GET",
+                                success: function () {
+                                    window.location.href = "/paciente/" 
+                                }
+                                });
+                     }
+                });
+             });    
+
+           });
+        </script>
+    </body>
+</html>
